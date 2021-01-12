@@ -65,9 +65,9 @@ class Data:
                     self.label3 = np.array(label)
         
         self.labelName = np.array(arr_Namelabel)
-        jum_kelas = len(self.labelName)
-        n_train = (int(self.count * trainRatio) // jum_kelas) 
-        n_test = (int(self.count * testRatio ) // jum_kelas) - 1
+        self.jum_kelas = len(self.labelName)
+        n_train = (int(self.count * trainRatio) // self.jum_kelas) 
+        n_test = (int(self.count * testRatio ) // self.jum_kelas) - 1
        
         self.trainSet = np.concatenate((self.data0[0:n_train,:,:,:],
                                        self.data1[0:n_train,:,:,:],

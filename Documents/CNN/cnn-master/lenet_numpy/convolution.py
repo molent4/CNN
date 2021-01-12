@@ -84,23 +84,14 @@ class CONV_LAYER:
 
         X_padded = np.pad(X, ((0,0), (0,0), (pad_len, pad_len), (pad_len, pad_len)), 'constant')
 
-        if stride == 1:
-            # scipy.signal.convolve2d doesn't have any attribute for stride, so it works for only stride = 1
-            # Rotate kernel by 180
-            kernel_180 = np.rot90(self.kernel, 2, (2,3))
-            for img in range(N):
-                for conv_depth in range(K):
-                    for inp_depth in range(D):
-                        self.feature_map[img, conv_depth] += scipy.signal.convolve2d(X_padded[img, inp_depth], kernel_180[conv_depth, inp_depth], mode='valid')
-                    self.feature_map[img, conv_depth] += self.bias[conv_depth]
-        else:
-            # Manual convolution when stride > 1, but above method is faster.
-            for img in range(N):
-                for conv_depth in range(K):
-                    for h in range(0, H + 2*pad_len - K_H + 1, stride):
-                        for w in range(0, W + 2*pad_len - K_W + 1, stride):
-                            self.feature_map[img, conv_depth, h//stride, w//stride] = \
-                                np.sum(X_padded[img, :, h:h+K_H, w:w+K_W] * self.kernel[conv_depth,:,:,:]) + self.bias[conv_depth]
+
+        # Manual convolution when stride > 1, but above method is faster.
+        for img in range(N):
+            for conv_depth in range(K):
+                for h in range(0, H + 2*pad_len - K_H + 1, stride):
+                    for w in range(0, W + 2*pad_len - K_W + 1, stride):
+                        self.feature_map[img, conv_depth, h//stride, w//stride] = \
+                            np.sum(X_padded[img, :, h:h+K_H, w:w+K_W] * self.kernel[conv_depth,:,:,:]) + self.bias[conv_depth]
 
         self.cache = X
         return self.feature_map, np.sum(np.square(self.kernel))
