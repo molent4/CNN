@@ -18,8 +18,8 @@ class SOFTMAX_LAYER:
         """
         self.cache = X
         dummy = np.exp(X)
-        self.Y = dummy/np.sum(dummy, axis=1, keepdims=True)
-        return self.Y, 0
+        self.output = dummy/np.sum(dummy, axis=1, keepdims=True)
+        return self.output, 0
 
     def backward(self, output):
         """

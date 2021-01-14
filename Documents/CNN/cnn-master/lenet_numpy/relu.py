@@ -12,14 +12,23 @@ class RELU_LAYER:
             X: Input data of any shape
         """
         self.cache = X
-        self.feature_map = np.maximum(X, 0)
-        return self.feature_map, 0
+        self.output = np.maximum(X, 0)
+        return self.output, 0
 
     def backward(self, delta):
         """
         Computes the backward pass of Relu Layer.
         Input:
             delta: Shape of delta values should be same as of X in cache
+        """
+        """
+         Zero gradient where input values were negative
+         we just copy value from next layer because 
+         derivative of relu if z > 0 = 1, else 0
+         in chain rule we will multiply dvalue by one 
+         we dont have to do the multiply, just copy the dvalue
+         so we just have to make sure to change negative value to 0
+         drelu_dz = dvalue * (1. if z > 0 else 0.)
         """
         self.delta_X = delta * (self.cache >= 0)
         return self.delta_X

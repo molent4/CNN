@@ -12,8 +12,8 @@ class SIGMOID_LAYER:
             X: Input data of any shape
         """
         self.cache = X
-        self.feature_map = 1.0/(1.0 + np.exp(-X))
-        return self.feature_map, 0
+        self.output = 1.0/(1.0 + np.exp(-X))
+        return self.output, 0
 
     def backward(self, delta):
         """
