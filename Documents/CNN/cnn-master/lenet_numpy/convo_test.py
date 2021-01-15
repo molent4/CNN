@@ -78,8 +78,8 @@ pool 1 output size (240, 6, 24, 24)
 pool 2 output size (240, 6, 13, 13)
 
 """
-epochs = 11
-
+epochs = 1001
+error_array = []
 for epoch in tqdm(range(epochs)):
     
     start = timeit.default_timer()
@@ -109,6 +109,7 @@ for epoch in tqdm(range(epochs)):
     
     sf.forward(fc5.output)
     error = loss.calculate(sf.output, trainLabel)
+    error_array.append(error)
     
 
     loss.backward(sf.output, trainLabel)

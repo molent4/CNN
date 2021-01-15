@@ -47,6 +47,7 @@ class FC_LAYER:
             nodes_l2: number of nodes in this fc layer
         """
         kernel, bias = self.kernel, self.bias
+        X = np.divide(X, np.amax(X))
         self.cache = (X, kernel, bias)
         self.output = np.dot(X, kernel) + bias
         #assert self.activations.shape == (X.shape[0], bias.shape[0])
