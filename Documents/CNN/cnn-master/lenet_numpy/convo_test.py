@@ -5,7 +5,7 @@ Created on Tue Jan 12 12:47:32 2021
 @author: ASUS
 """
 import os
-from convolution import *
+from convolutions import *
 from relu import *
 from sigmoid import *
 from fullyconnect import *
@@ -71,6 +71,12 @@ conv2.forward(pool1.feature_map)
 relu2.forward(conv2.feature_map)
 pool2.forward(relu2.output)
 
+print("conv 1",conv1.feature_map.shape)
+print("pool 1",pool1.feature_map.shape)
+
+print("conv 2",conv2.feature_map.shape)
+print("pool 2",pool2.feature_map.shape)
+
 temp = pool2.feature_map
 
 fc3.forward(temp.reshape(pool2.feature_map.shape[0], pool2.feature_map.shape[1]*pool2.feature_map.shape[2]*pool2.feature_map.shape[3]))
@@ -84,17 +90,35 @@ fc5.forward(sigmoid1.output)
 sf.forward(fc5.output)
 loss.calculate(sf.output, Train_target)
 
-stop = timeit.default_timer()
-layer_time += [stop-start]
 
-#print(conv1.feature_map)
-#print(relu1.feature_map)  
-print("durasi 2 layer ekstrasi ",layer_time)
 
 loss.backward(sf.output, Train_target)
 sf.backward(loss.dinputs)
 fc5.backward(sf.dinputs)
 sigmoid1.backward(fc5.delta_X)
 fc4.backward(sigmoid1.delta_X)
+relu3.backward(fc4.delta_X)
+fc3.backward(relu3.delta_X)
 
-print(sf.dinputs)
+print("starting backpropation feature layer 2")
+pool2.backward(fc3.delta_X)
+relu2.backward(pool2.delta_X)
+conv2.backward(relu2.delta_X)
+
+print("finish backpropation feature layer 2")
+
+print("starting backpropation feature layer 1")
+
+pool1.backward(conv2.delta_X)
+relu1.backward(pool1.delta_X)
+conv1.backward(relu1.delta_X)
+
+print("finish backpropation feature layer 1")
+
+stop = timeit.default_timer()
+layer_time += [stop-start]
+
+#print(conv1.feature_map)
+#print(relu1.feature_map)  
+print("durasi 1 feedfoward and backpropagate ",layer_time)
+

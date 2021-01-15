@@ -21,5 +21,5 @@ class SIGMOID_LAYER:
         Input:
             delta: Shape of delta values should be same as of X in cache
         """
-        self.delta_X = delta * (self.feature_map) * (1 - self.feature_map)
+        self.delta_X = delta * (self.output) * (1 - self.output)
         return self.delta_X

@@ -110,6 +110,7 @@ class CONV_LAYER:
 
         N, D, H, W = X.shape
         K, K_D, K_H, K_W = self.kernel.shape
+        inp_depth = delta.shape[1]
 
         #assert self.depth == K
         #assert D == K_D
@@ -126,7 +127,7 @@ class CONV_LAYER:
         X_padded = np.pad(X, ((0,0), (0,0), (pad_len, pad_len), (pad_len, pad_len)), 'constant')
         print("--x padded--")
         print(X_padded.shape)
-        print(X_padded[1:5, :,: ,:])
+        #print(X_padded[1:5, :,: ,:])
         
         delta_X_padded = np.zeros(X_padded.shape)
         self.delta_K = np.zeros((self.kernel.shape))
@@ -147,22 +148,24 @@ class CONV_LAYER:
         #assert self.delta_X.shape == X.shape
         print("self.delta_K",self.delta_K.shape)
         print("delta",delta.shape)
-        print("X_padded",X_padded.shape)
+        #print("X_padded",X_padded.shape)
         
         # Delta kernel
         for img in range(N):
             for kernel_num in range(K):
-                for h in range(conv_h):
-                    for w in range(conv_w):
-                        a = self.delta_K[kernel_num,:,:,:].shape
-                        b = delta[img, kernel_num, h, w].shape
-                        c = X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W].shape
-                        print("a {}, b {}, c{}".format(a,b,c))
-                        print("delta", delta[img, kernel_num, h, w])
-                        print("X_Padded",X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W])
-                        temp = delta[img, kernel_num, h, w] * X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W]
-                        print("temp", temp)
-                        self.delta_K[kernel_num,:,:,:] = self.delta_K[kernel_num,:,:,:] + temp
+                for t in range(inp_depth):
+                    for h in range(conv_h):
+                        for w in range(conv_w):
+                            a = self.delta_K[kernel_num,:,:,:].shape
+                            b = delta[img, kernel_num, h, w].shape
+                            c = X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W].shape
+                            #print("a {}, b {}, c{}".format(a,b,c))
+                            #print("delta", delta[img, kernel_num, h, w])
+                            #print("X_Padded",X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W])
+                            temp = delta[img, kernel_num, h, w] * X_padded[img, t, h*stride:h*stride+K_H, w*stride:w*stride+K_W]
+                            #print("temp", temp)
+                            self.delta_K[kernel_num,:,:,:] = self.delta_K[kernel_num,:,:,:] + temp
+
 
         # Delta Bias
         self.delta_b = np.sum(delta, (0,2,3))
