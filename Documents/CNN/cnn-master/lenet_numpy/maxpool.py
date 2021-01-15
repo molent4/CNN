@@ -40,10 +40,10 @@ class MAX_POOL_LAYER:
         #assert fmap.shape == X.shape and dmap.shape == X.shape
 
         self.delta_X = np.zeros(X.shape)
-        print(delta.shape)
-        print(fmap.shape)
-        print(dmap.shape)
-        print(self.delta_X.shape)
+        #print(delta.shape)
+        #print(fmap.shape)
+        #print(dmap.shape)
+        #print(self.delta_X.shape)
         
         self.delta_X = (fmap == X) * dmap
 

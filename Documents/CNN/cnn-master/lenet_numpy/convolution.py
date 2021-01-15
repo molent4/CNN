@@ -124,9 +124,9 @@ class CONV_LAYER:
         # Rotate Kernel by 180 degrees      [No need]
         #kernel_180 = np.rot90(kernel, 2, (2,3))
         X_padded = np.pad(X, ((0,0), (0,0), (pad_len, pad_len), (pad_len, pad_len)), 'constant')
-        print("--x padded--")
-        print(X_padded.shape)
-        print(X_padded[1:5, :,: ,:])
+        #print("--x padded--")
+        #print(X_padded.shape)
+        #print(X_padded[1:5, :,: ,:])
         
         delta_X_padded = np.zeros(X_padded.shape)
         self.delta_K = np.zeros((self.kernel.shape))
@@ -145,59 +145,26 @@ class CONV_LAYER:
             self.delta_X = delta_X_padded[:]
 
         #assert self.delta_X.shape == X.shape
-        print("self.delta_K",self.delta_K.shape)
-        print("delta",delta.shape)
-        print("X_padded",X_padded.shape)
+        #print("self.delta_K",self.delta_K.shape)
+        #print("delta",delta.shape)
+        #print("X_padded",X_padded.shape)
         
         # Delta kernel
         for img in range(N):
             for kernel_num in range(K):
                 for h in range(conv_h):
                     for w in range(conv_w):
-                        a = self.delta_K[kernel_num,:,:,:].shape
-                        b = delta[img, kernel_num, h, w].shape
-                        c = X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W].shape
-                        print("a {}, b {}, c{}".format(a,b,c))
-                        print("delta", delta[img, kernel_num, h, w])
-                        print("X_Padded",X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W])
+                        #a = self.delta_K[kernel_num,:,:,:].shape
+                        #b = delta[img, kernel_num, h, w].shape
+                        #c = X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W].shape
+
                         temp = delta[img, kernel_num, h, w] * X_padded[img, :, h*stride:h*stride+K_H, w*stride:w*stride+K_W]
-                        print("temp", temp)
+                        #print(img,kernel_num,h,w)
                         self.delta_K[kernel_num,:,:,:] = self.delta_K[kernel_num,:,:,:] + temp
+                #print(delta.shape, X_padded.shape, self.delta_K.shape)
 
         # Delta Bias
         self.delta_b = np.sum(delta, (0,2,3))
         return self.delta_X
 
-    def update_kernel(self, **params):
-        """
-        Update weights and biases stored in this layer.
-        Input:
-            params: Optional parameters- method, alpha, zeta
-        """
-        method = params.get("method", "")
-        alpha = params.get("alpha", 0.001)
-        zeta   = params.get("zeta", 0.01)
-        batch_size = params.get("batch", 1)
-        beta1        = params.get("beta1", 0.9)
-        beta2        = params.get("beta2", 0.999)
-        fudge_factor = 1e-8                         # smoothing term to avoid division by zero
-
-        if method == "adagrad":
-            self.gradient_history += np.square(self.delta_K + (zeta*self.kernel/batch_size))
-            self.bias_history += np.square(self.delta_b)
-            self.kernel -= alpha*(self.delta_K + (zeta*self.kernel/batch_size))/(np.sqrt(self.gradient_history) + fudge_factor)
-            self.bias    -= alpha*self.delta_b/(np.sqrt(self.bias_history) + fudge_factor)
-        elif method == "adam":
-            self.timestamp += 1
-            alpha = alpha * np.sqrt(1 - np.power(beta2, self.timestamp)) / (1 - np.power(beta1, self.timestamp))
-            self.m_kernel = beta1 * self.m_kernel + (1 - beta1) * (self.delta_K + (zeta*self.kernel/batch_size))
-            self.m_bias = beta1 * self.m_bias + (1 - beta1) * self.delta_b
-            self.v_kernel = beta2 * self.v_kernel + (1 - beta2) * np.square((self.delta_K + (zeta*self.kernel/batch_size)))
-            self.v_bias = beta2 * self.v_bias + (1 - beta2) * np.square(self.delta_b)
-
-            self.kernel -= np.divide(alpha * self.m_kernel, (np.sqrt(self.v_kernel) + fudge_factor))
-            self.bias -= np.divide(alpha * self.m_bias, (np.sqrt(self.v_bias) + fudge_factor))
-        else:
-            self.kernel -= alpha*(self.delta_K + zeta*self.kernel/batch_size)
-            self.bias   -= alpha*self.delta_b
-        pass
+    

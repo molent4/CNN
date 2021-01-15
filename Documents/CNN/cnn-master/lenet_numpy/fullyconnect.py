@@ -73,6 +73,13 @@ class FC_LAYER:
         Input:
             params: Optional parameters- method, alpha, zeta
         """
+        """
+        Train the Lenet-5.
+        Input:
+            params: parameters including "batch", "alpha"(learning rate),
+                    "zeta"(regularization parameter), "method" (gradient method),
+                    "epochs", ...
+        """
         method       = params.get("method", "")
         alpha        = params.get("alpha", 0.001)
         mu           = params.get("mu", 0.9)
