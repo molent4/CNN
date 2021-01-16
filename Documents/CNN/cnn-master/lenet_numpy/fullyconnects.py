@@ -65,6 +65,6 @@ class FC_LAYER:
         #print(self.delta_K[0][range(10)], self.delta_K.shape)
         #print(X.T[0][range(10)], X.T.shape)
         #print(delta[0][range(10)], delta.shape)
-        self.delta_b = np.sum(delta, axis=0)
+        self.delta_b = np.sum(delta, axis=0, keepdims=True)
         return self.delta_X
 

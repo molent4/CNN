@@ -80,6 +80,7 @@ pool 2 output size (240, 6, 13, 13)
 """
 epochs = 1001
 error_array = []
+training_start = timeit.default_timer()
 for epoch in tqdm(range(epochs)):
     
     start = timeit.default_timer()
@@ -141,8 +142,8 @@ for epoch in tqdm(range(epochs)):
     optimizer.update_params(conv2)
 
     
-    stop = timeit.default_timer()
     optimizer.post_update_params()
+    stop = timeit.default_timer()
     layer_time += [stop-start]
     predictions = np.argmax(sf.output, axis=1)
     if len(trainLabel.shape) == 2:
@@ -151,12 +152,14 @@ for epoch in tqdm(range(epochs)):
         # np.argmax return array of index refering to position of maximun value along axis 1
     accuracy = np.mean(predictions==trainLabel)
     
-    if not epoch % 2:
+    if not epoch % 10:
         print('\n'+ f'epoch: {epoch}, ' +
               f'acc: {accuracy:.3f}, ' +
               f'loss: {error:.3f}, ' +
               f'lr: {optimizer.current_learning_rate}')
-
+training_stop = timeit.default_timer()
+training_time += [training_stop-training_start]
+print("\nTraining Time : ", training_time) 
     
 
     

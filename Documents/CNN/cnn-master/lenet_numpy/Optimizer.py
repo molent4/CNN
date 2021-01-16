@@ -53,7 +53,7 @@ class Optimizer_SGD:
 
     # Initialize optimizer - set settings, 
     # learning rate of 1. is default for this optimizer
-    def __init__(self, learning_rate=1., decay=0., momentum=0.):
+    def __init__(self, learning_rate=0.001, decay=0., momentum=0.1):
         # params
         # learning_rate = fixed learning rate
         # current_learning_rate = dinamic learning rate, learning rate decreased each epoch

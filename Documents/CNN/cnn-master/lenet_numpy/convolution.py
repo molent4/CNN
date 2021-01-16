@@ -26,22 +26,22 @@ class CONV_LAYER:
             except:
                 raise
         else:
-            f = np.sqrt(6)/np.sqrt(fan[0] + fan[1])
+            #f = np.sqrt(6)/np.sqrt(fan[0] + fan[1])
             epsilon = 1e-6
-            self.kernel = np.random.uniform(-f, f + epsilon, kernel_size)
-            self.bias = np.random.uniform(-f, f + epsilon, kernel_size[0])
+            self.kernel = 0.01 * np.random.uniform(-1.0, 1.0 + epsilon, kernel_size)
+            self.bias = np.random.uniform(-1.0, 1.0 + epsilon, kernel_size[0])
 
         self.pad = params.get('pad', 0)                  # Default 0
         self.stride = params.get('stride', 1)            # Default 1
         if self.pad < 0:
             print("Invalid padding: pad cannot be negative")
             sys.exit()
-        self.gradient_history = np.zeros(kernel_size)
-        self.bias_history = np.zeros(kernel_size[0])
-        self.m_kernel = np.zeros(kernel_size)
-        self.m_bias = np.zeros(kernel_size[0])
-        self.v_kernel = np.zeros(kernel_size)
-        self.v_bias = np.zeros(kernel_size[0])
+        #self.gradient_history = np.zeros(kernel_size)
+        #self.bias_history = np.zeros(kernel_size[0])
+        #self.m_kernel = np.zeros(kernel_size)
+        #self.m_bias = np.zeros(kernel_size[0])
+        #self.v_kernel = np.zeros(kernel_size)
+        #self.v_bias = np.zeros(kernel_size[0])
         self.timestamp = 0
         pass
 
